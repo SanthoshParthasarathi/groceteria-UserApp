@@ -5,14 +5,14 @@ import 'package:learning_ui/controllers/cart.dart';
 class CartItem extends StatelessWidget {
   CartController _cartController = Get.put(CartController());
   String id;
-  String imageUrl;
+  String imageURL;
   String title;
   int qty;
   double price;
   double total;
 
   CartItem(
-      {this.id, this.imageUrl, this.title, this.qty, this.price, this.total});
+      {this.id, this.imageURL, this.title, this.qty, this.price, this.total});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class CartItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             child: Container(
               child: Image.asset(
-                imageUrl,
+                imageURL,
                 height: 60,
                 width: 60,
                 fit: BoxFit.cover,
@@ -58,7 +58,7 @@ class CartItem extends StatelessWidget {
                         "title": title,
                         "price": price,
                         "qty": qty,
-                        "imageURL": imageUrl
+                        "imageURL": imageURL
                       });
                     },
                     child: Icon(Icons.add, color: Colors.white, size: 16),
@@ -76,7 +76,7 @@ class CartItem extends StatelessWidget {
                         "title": title,
                         "price": price,
                         "qty": qty,
-                        "imageURL": imageUrl
+                        "imageURL": imageURL
                       });
                     },
                     child: Icon(Icons.remove, color: Colors.white, size: 16),

@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 
 class CartController extends GetxController {
   var cart = [].obs;
+  var selectedAddress = {}.obs;
+  var paymentMethod = 'Cash on delivery'.obs;
 
   getTotal() {
     num total = 0;
@@ -31,6 +33,10 @@ class CartController extends GetxController {
     }
     cart.refresh();
     print(cart);
+  }
+
+  clearCart() {
+    cart.clear();
   }
 
   removeFromCart(input) {
