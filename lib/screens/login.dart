@@ -13,6 +13,8 @@ class LoginScreen extends StatelessWidget {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+
   // login() {
   //   var emailText = (_emailController.text).trim().toLowerCase();
   //   var passwordText = _passwordController.text;
@@ -42,10 +44,10 @@ class LoginScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         backgroundColor: Colors.white,
-        leading: new IconButton(
-          icon: new Icon(Icons.arrow_back_ios_new, color: Colors.green),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        // leading: new IconButton(
+        //   icon: new Icon(Icons.arrow_back_ios_new, color: Colors.green),
+        //   onPressed: () => Navigator.of(context).pop(),
+        // ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -61,10 +63,11 @@ class LoginScreen extends StatelessWidget {
                   height: 120,
                   width: 120,
                 ),
-                SizedBox(height: 20),
-                Text(
-                  "Groceteria",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                SizedBox(height: 10),
+                Image.asset(
+                  "assets/images/Groceterialogo.png",
+                  height: 70,
+                  width: 120,
                 ),
                 SizedBox(height: 20),
                 TextField(
@@ -114,15 +117,24 @@ class LoginScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      GestureDetector(
-                          child: Image.asset("assets/images/fb-icon.png",
-                              height: 34),
-                          onTap: () {}),
-                      SizedBox(width: 25),
-                      GestureDetector(
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.transparent, elevation: 0),
+                        child: Image.asset("assets/images/fb-icon.png",
+                            height: 32),
+                        onPressed: () {
+                          // _auth.signInWithGoogle();
+                        },
+                      ),
+                      SizedBox(width: 10),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.transparent, elevation: 0),
                         child: Image.asset("assets/images/google-icon.png",
-                            height: 34),
-                        onTap: () {},
+                            height: 32),
+                        onPressed: () {
+                          _auth.signInWithGoogle();
+                        },
                       ),
                     ],
                   ),

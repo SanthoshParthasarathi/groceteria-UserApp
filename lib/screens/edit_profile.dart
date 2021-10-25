@@ -1,106 +1,100 @@
-import 'dart:io';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:learning_ui/screens/login.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:learning_ui/controllers/authentication.dart';
+import 'package:learning_ui/controllers/profile.dart';
 
 // ignore: must_be_immutable
-class EditProfile extends StatefulWidget {
-  @override
-  _EditProfileState createState() => _EditProfileState();
-}
+class EditProfile extends StatelessWidget {
+  static AuthController _authController = Get.put(AuthController());
 
-class _EditProfileState extends State<EditProfile> {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  static ProfileController _profileController = Get.put(ProfileController());
 
-  FirebaseFirestore _db = FirebaseFirestore.instance;
-
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _addressController = TextEditingController();
-  TextEditingController _mobileController = TextEditingController();
+  TextEditingController _nameController =
+      TextEditingController(text: _profileController.userObj["name"]);
+  TextEditingController _emailController =
+      TextEditingController(text: _profileController.userObj["email"]);
+  TextEditingController _mobileController =
+      TextEditingController(text: _profileController.userObj["mobile"]);
+  TextEditingController _addressController =
+      TextEditingController(text: _profileController.userObj["address"]);
 
   var _profileImage = "http://placehold.it/120x120";
 
-  logout() {
-    _auth.signOut().then((value) {
-      Get.offAll(() => LoginScreen());
-    }).catchError((e) {
-      print(e);
-    });
-  }
+  // logout() {
+  //   _auth.signOut().then((value) {
+  //     Get.offAll(() => LoginScreen());
+  //   }).catchError((e) {
+  //     print(e);
+  //   });
+  // }
 
-  readStoreDetails() {
-    _db.collection("settings").doc("store").snapshots().listen((value) {
-      print(value);
-      print(value.id);
-      print(value.data());
-      setState(() {
-        _nameController.text = value.data()["name"];
-        _emailController.text = value.data()["email"];
-        _mobileController.text = value.data()["mobile"];
-        _addressController.text = value.data()["address"];
-        _profileImage = value.data()["imageURL"];
-      });
-    });
-  }
+  // readStoreDetails() {
+  //   _db.collection("settings").doc("store").snapshots().listen((value) {
+  //     print(value);
+  //     print(value.id);
+  //     print(value.data());
+  //     setState(() {
+  //       _nameController.text = value.data()["name"];
+  //       _emailController.text = value.data()["email"];
+  //       _mobileController.text = value.data()["mobile"];
+  //       _addressController.text = value.data()["address"];
+  //       _profileImage = value.data()["imageURL"];
+  //     });
+  //   });
+  // }
 
-  updateStoreDetails() {
-    _db.collection("settings").doc("store").update({
-      "address": _addressController.text,
-      "name": _nameController.text,
-      "mobile": _mobileController.text,
-      "email": _emailController.text
-    }).then((value) {
-      print("updated those values");
-    }).catchError((e) {
-      print(e);
-    });
-  }
+  // updateStoreDetails() {
+  //   _db.collection("settings").doc("store").update({
+  //     "address": _addressController.text,
+  //     "name": _nameController.text,
+  //     "mobile": _mobileController.text,
+  //     "email": _emailController.text
+  //   }).then((value) {
+  //     print("updated those values");
+  //   }).catchError((e) {
+  //     print(e);
+  //   });
+  // }
 
-  uploadProfileImage() async {
-    var picker = ImagePicker();
-    var pickedFile = await picker.getImage(source: ImageSource.gallery);
-    if (pickedFile.path.length != 0) {
-      File image = File(pickedFile.path);
-      FirebaseStorage _storage = FirebaseStorage.instance;
+  // uploadProfileImage() async {
+  //   var picker = ImagePicker();
+  //   var pickedFile = await picker.getImage(source: ImageSource.gallery);
+  //   if (pickedFile.path.length != 0) {
+  //     File image = File(pickedFile.path);
+  //     FirebaseStorage _storage = FirebaseStorage.instance;
 
-      _storage
-          .ref()
-          .child("store")
-          .child("storeImage")
-          .putFile(image)
-          .then((value) {
-        print(value);
-        value.ref.getDownloadURL().then((url) {
-          print("Uploaded Url - " + url);
-          _db
-              .collection("settings")
-              .doc("store")
-              .update({"imageURL": url}).then((value) {
-            print("updated those values");
-          }).catchError((e) {
-            print(e);
-          });
-        });
-      }).catchError((e) {
-        print(e);
-      });
-    } else {
-      print("no file is chosen");
-    }
-  }
+  //     _storage
+  //         .ref()
+  //         .child("store")
+  //         .child("storeImage")
+  //         .putFile(image)
+  //         .then((value) {
+  //       print(value);
+  //       value.ref.getDownloadURL().then((url) {
+  //         print("Uploaded Url - " + url);
+  //         _db
+  //             .collection("settings")
+  //             .doc("store")
+  //             .update({"imageURL": url}).then((value) {
+  //           print("updated those values");
+  //         }).catchError((e) {
+  //           print(e);
+  //         });
+  //       });
+  //     }).catchError((e) {
+  //       print(e);
+  //     });
+  //   } else {
+  //     print("no file is chosen");
+  //   }
+  // }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    readStoreDetails();
-  }
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   readStoreDetails();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -119,10 +113,13 @@ class _EditProfileState extends State<EditProfile> {
               SizedBox(height: 16),
               GestureDetector(
                 onTap: () {
-                  uploadProfileImage();
+                  _profileController.uploadProfileImage();
                 },
                 child: CircleAvatar(
-                  backgroundImage: NetworkImage(_profileImage),
+                  backgroundImage: NetworkImage(
+                      _profileController.userObj["imageURL"] == null
+                          ? _profileImage
+                          : _profileController.userObj["imageURL"]),
                   radius: 65,
                 ),
               ),
@@ -174,7 +171,12 @@ class _EditProfileState extends State<EditProfile> {
                 child: ElevatedButton(
                   child: Text("Save Changes"),
                   onPressed: () {
-                    updateStoreDetails();
+                    _profileController.updateProfile({
+                      "mobile": _mobileController.text,
+                      "email": _emailController.text,
+                      "name": _nameController.text,
+                      "address": _addressController.text
+                    });
                     Get.back();
                   },
                 ),
@@ -184,7 +186,7 @@ class _EditProfileState extends State<EditProfile> {
                 child: TextButton(
                   child: Text('Logout from this account'),
                   onPressed: () {
-                    logout();
+                    _authController.logout();
                   },
                 ),
               ),

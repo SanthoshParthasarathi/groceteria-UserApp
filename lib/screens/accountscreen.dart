@@ -4,23 +4,20 @@ import 'package:learning_ui/controllers/profile.dart';
 import 'package:learning_ui/screens/edit_profile.dart';
 import 'package:learning_ui/screens/manage_address.dart';
 import 'package:learning_ui/screens/orders.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
-class AccountScreen extends StatefulWidget {
-  @override
-  _AccountScreenState createState() => _AccountScreenState();
-}
-
-class _AccountScreenState extends State<AccountScreen> {
+class AccountScreen extends StatelessWidget {
   var isSwitched = false;
   ProfileController _profileController = Get.put(ProfileController());
+  var _profileImage = "http://placehold.it/120x120";
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    print("${_profileController.userObj["name"]} name");
-    print("${_profileController.userObj["address"]} add");
-    print("${_profileController.userObj["mobile"]} mobile");
+  registerPushNotification() {
+    FirebaseMessaging.instance.getToken().then((token) {
+      print(token);
+      _profileController.updateProfile({"pushToken": token});
+    }).catchError((e) {
+      print(e);
+    });
   }
 
   @override
@@ -35,36 +32,42 @@ class _AccountScreenState extends State<AccountScreen> {
       ),
       body: ListView(
         children: [
-          ListTile(
-            leading: CircleAvatar(
-              backgroundImage: AssetImage("assets/images/profile1.jpg"),
-            ),
-            title: Text('Santhosh Parthasarathi'),
-            subtitle: Text('+8015456303'),
-            trailing: TextButton(
-              child: Text('Edit'),
-              onPressed: () {
-                Get.to(() => EditProfile());
-              },
+          Obx(
+            () => ListTile(
+              leading: CircleAvatar(
+                backgroundImage: NetworkImage(
+                    _profileController.userObj["imageURL"] == null
+                        ? _profileImage
+                        : _profileController.userObj["imageURL"]),
+              ),
+              title: Text("${_profileController.userObj["name"]}"),
+              subtitle: Text("${_profileController.userObj["mobile"]}"),
+              trailing: TextButton(
+                child: Text('Edit'),
+                onPressed: () {
+                  Get.to(() => EditProfile());
+                },
+              ),
             ),
           ),
-          ListTile(
-            leading: Icon(
-              Icons.notifications_active_outlined,
-              color: Colors.green,
-            ),
-            title: Text("Notifications"),
-            subtitle: Text("Turn On / Off Notifications"),
-            trailing: Switch(
-              value: isSwitched,
-              onChanged: (value) {
-                setState(() {
-                  isSwitched = value;
-                  print(isSwitched);
-                });
-              },
-              activeTrackColor: Colors.lightGreenAccent,
-              activeColor: Colors.green,
+          Obx(
+            () => ListTile(
+              leading: Icon(Icons.notifications_active_outlined,
+                  color: Colors.green),
+              title: Text("Notifications"),
+              subtitle: Text("Turn on/off Notification"),
+              trailing: Switch(
+                onChanged: (res) {
+                  if (res) {
+                    registerPushNotification();
+                  } else {
+                    _profileController.updateProfile({"pushToken": null});
+                  }
+                },
+                value: _profileController.userObj["pushToken"] != null
+                    ? true
+                    : false,
+              ),
             ),
           ),
           ListTile(

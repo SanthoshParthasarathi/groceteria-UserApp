@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1028292244168-cu6m0ton6esdm1ug79q811goc1roajgs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.codesundar.store",
+            "certificate_hash": "7258cd245e98c8549cc2f9445f767854750583ff"
+          }
+        },
+        {
           "client_id": "1028292244168-13lumlm65m07gehp167sgl4kf9ejr8mc.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -42,6 +50,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "1028292244168-4vget6g382ha9364toi7nn3rb5t2rapa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.learning_ui",
+            "certificate_hash": "7258cd245e98c8549cc2f9445f767854750583ff"
+          }
+        },
         {
           "client_id": "1028292244168-13lumlm65m07gehp167sgl4kf9ejr8mc.apps.googleusercontent.com",
           "client_type": 3

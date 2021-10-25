@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:get/get.dart';
 import 'package:learning_ui/controllers/address.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 class EditAddress extends StatefulWidget {
   bool canEdit;
@@ -18,6 +23,54 @@ class _EditAddressState extends State<EditAddress> {
   TextEditingController _mobileController = TextEditingController();
   TextEditingController _fullAddressController = TextEditingController();
   TextEditingController _pinCodeController = TextEditingController();
+
+  double _lat = 13.0827;
+  double _lng = 80.2707;
+
+  Completer<GoogleMapController> _controller = Completer();
+  Location location = new Location();
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
+  CameraPosition _currentPosition;
+
+  generateAddress(lat, lng) async {
+    final coordinates = new Coordinates(lat, lng);
+    var address =
+        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    _fullAddressController.text = address.first.addressLine.toString();
+    _pinCodeController.text = address.first.postalCode.toString();
+  }
+
+  fetchMyLocation() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+    await location.getLocation().then((res) async {
+      final GoogleMapController controller = await _controller.future;
+      final _position = CameraPosition(
+        target: LatLng(res.latitude, res.longitude),
+        zoom: 12,
+      );
+      controller.animateCamera(CameraUpdate.newCameraPosition(_position));
+      setState(() {
+        _lat = res.latitude;
+        _lng = res.longitude;
+      });
+      generateAddress(_lat, _lng);
+    });
+  }
 
   @override
   void initState() {
@@ -51,7 +104,27 @@ class _EditAddressState extends State<EditAddress> {
         child: Column(
           children: [
             Container(
-              child: Image.asset("assets/images/map.png"),
+              padding: EdgeInsets.only(top: 18, left: 18, right: 18),
+              height: 280,
+              child: GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(_lat, _lng),
+                  zoom: 12,
+                ),
+                onMapCreated: (res) {
+                  _controller.complete(res);
+                  fetchMyLocation();
+                },
+                markers: {
+                  Marker(
+                      markerId: MarkerId("current"),
+                      position: LatLng(_lat, _lng),
+                      draggable: true,
+                      onDragEnd: (latlng) {
+                        generateAddress(latlng.latitude, latlng.longitude);
+                      })
+                },
+              ),
             ),
             Container(
               padding: EdgeInsets.all(18),

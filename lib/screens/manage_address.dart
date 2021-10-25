@@ -23,6 +23,7 @@ class ManageAddress extends StatelessWidget {
             itemCount: _addressController.addresses.length,
             itemBuilder: (bc, index) {
               return ListTile(
+                  isThreeLine: true,
                   title: Text("${_addressController.addresses[index]["tag"]}"),
                   subtitle:
                       Text("${_addressController.addresses[index]["address"]}"),

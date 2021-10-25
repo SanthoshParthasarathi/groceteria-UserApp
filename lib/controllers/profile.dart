@@ -1,5 +1,7 @@
 import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,21 +9,29 @@ import 'package:image_picker/image_picker.dart';
 class ProfileController extends GetxController {
   var userObj = {}.obs;
   FirebaseFirestore _db = FirebaseFirestore.instance;
+  FirebaseAuth _auth = FirebaseAuth.instance;
 
-  readStoreDetails() {
-    _db.collection("settings").doc("store").snapshots().listen((value) {
-      if (value.data() != null) {
-        print(value);
-        print(value.id);
-        print(value.data());
-        userObj.assignAll({"id": value.id, ...value.data()});
+  // @override
+  // onInit() {
+  //   super.onInit();
+  //   getUserDetail(userObj);
+  // }
+
+  getUserDetail(id) {
+    _db.collection("accounts").doc(id).snapshots().listen((res) {
+      if (res.data() != null) {
+        userObj.assignAll({"id": res.id, ...res.data()});
       }
     });
   }
 
-  updateStoreDetails(obj) {
-    _db.collection("settings").doc("store").update(obj).then((value) {
-      print("updated those values");
+  updateProfile(obj) {
+    _db
+        .collection("accounts")
+        .doc(_auth.currentUser.uid)
+        .update(obj)
+        .then((value) {
+      print("Updated");
     }).catchError((e) {
       print(e);
     });
@@ -33,21 +43,20 @@ class ProfileController extends GetxController {
     if (pickedFile.path.length != 0) {
       File image = File(pickedFile.path);
       FirebaseStorage _storage = FirebaseStorage.instance;
-
       _storage
           .ref()
-          .child("store")
-          .child("storeImage")
+          .child("accounts")
+          .child(_auth.currentUser.uid)
+          .child("profile")
           .putFile(image)
-          .then((value) {
-        print(value);
-        value.ref.getDownloadURL().then((url) {
-          print("Uploaded Url - " + url);
-          _db
-              .collection("settings")
-              .doc("store")
-              .update({"imageURL": url}).then((value) {
-            print("updated those values");
+          .then((res) {
+        print(res);
+        res.ref.getDownloadURL().then((url) {
+          print("uploaded URL" + url);
+          _db.collection("accounts").doc(_auth.currentUser.uid).update({
+            "imageURL": url,
+          }).then((value) {
+            print("Updated");
           }).catchError((e) {
             print(e);
           });
@@ -56,7 +65,7 @@ class ProfileController extends GetxController {
         print(e);
       });
     } else {
-      print("no file is chosen");
+      print("No file picked");
     }
   }
 }

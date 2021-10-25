@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:learning_ui/controllers/cart.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ProductCard extends StatelessWidget {
   CartController _cartController = Get.put(CartController());
@@ -23,7 +24,7 @@ class ProductCard extends StatelessWidget {
               child: Container(
                 height: double.infinity,
                 width: double.infinity,
-                child: Image.asset(
+                child: Image.network(
                   imageURL,
                   fit: BoxFit.cover,
                 ),
@@ -73,6 +74,14 @@ class ProductCard extends StatelessWidget {
                             "qty": 1,
                             "imageURL": imageURL
                           });
+                          Fluttertoast.showToast(
+                              msg: "$title is added to the cart",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIos: 1,
+                              backgroundColor: Colors.white,
+                              textColor: Colors.black,
+                              fontSize: 18.0);
                         },
                       ),
                     )

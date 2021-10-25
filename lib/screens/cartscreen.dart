@@ -10,6 +10,8 @@ class CartScreen extends StatelessWidget {
   AddressController _addressController = Get.put(AddressController());
   OrderController _orderController = Get.put(OrderController());
 
+  String noAddress = "Select a Address to deliver";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,11 +53,17 @@ class CartScreen extends StatelessWidget {
                           Obx(
                             () => ListTile(
                               title: Text("Delivery Address"),
-                              subtitle: Text(
-                                  "${_cartController.selectedAddress["address"]}"),
+                              subtitle: _cartController
+                                          .selectedAddress["address"] ==
+                                      null
+                                  ? Text("Select a address to deliver")
+                                  : Text(
+                                      "${_cartController.selectedAddress["address"]}"),
                               trailing: TextButton(
                                 child: Text("Change"),
                                 onPressed: () {
+                                  print(
+                                      "${_cartController.selectedAddress["address"]}");
                                   _addressController.getAllAddresses();
                                   Get.bottomSheet(
                                     BottomSheet(

@@ -34,16 +34,17 @@ class SignUpScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 50),
+                SizedBox(height: 30),
                 Image.asset(
                   "assets/images/logo.png",
                   height: 120,
                   width: 120,
                 ),
                 SizedBox(height: 20),
-                Text(
-                  "Grocery Shop",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                Image.asset(
+                  "assets/images/Groceterialogo.png",
+                  height: 70,
+                  width: 120,
                 ),
                 SizedBox(height: 20),
                 TextField(

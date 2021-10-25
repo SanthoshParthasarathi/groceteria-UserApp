@@ -24,7 +24,7 @@ class CartItem extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Container(
-              child: Image.asset(
+              child: Image.network(
                 imageURL,
                 height: 60,
                 width: 60,
@@ -40,7 +40,7 @@ class CartItem extends StatelessWidget {
                 children: [
                   Text(
                     "$title",
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: 16),
                   ),
                   Text("Qty $qty x ₹ $price"),
                 ],
